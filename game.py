@@ -1,12 +1,13 @@
-from tictactoe import tictactoe
+from tictactoe import TicTacToe
 
 def main():
-  game = tictactoe()
+  game = TicTacToe()
 
   game.printBoard()
   player = 1
 
   while not game.gameOver():
+    print('Player ' + str(player) + '\'s turn!')
     y = input("What row do you want to play? ")
     while not checkInt(y):
       y = input("Please enter a whole number value. ")

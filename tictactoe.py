@@ -1,21 +1,30 @@
 # Author: Bryce Dias
 # Basic CLI Tic Tac Toe
 
-class tictactoe:
+class TicTacToe:
 
-  boardRange = range(0, 3)
+  # variable to dictate size of board
+  boardSize = 3
+  boardRange = range(0, boardSize)
 
   def __init__(self):
     # initializes an empty game board
     # '0' represents an empty space
-    self.board = [
-      [0, 0, 0],
-      [0, 0, 0],
-      [0, 0, 0]
-    ]
+    # dynamically initializes square board of size boardSize
+    self.board = []
+    for i in self.boardRange:
+      row = [0] * self.boardSize
+      self.board.append(row)
+
   
   def printBoard(self):
-    print("   a  b  c")
+    # print("   a  b  c ...")
+    colIDs = '   '
+    for i in self.boardRange:
+      tempChar = str(chr(i+97))
+      colIDs += (tempChar + '  ')
+
+    print(colIDs)
     for count, row in enumerate(self.board):
       print(count, row)
 
@@ -53,12 +62,12 @@ class tictactoe:
     self.printBoard()
 
   def gameOver(self):
-    #checking the rows
+    # checking the rows
     for row in self.board:
       if self.checkWin(row):
         return True, row[0]
 
-    #checking the columns
+    # checking the columns
     for col in self.boardRange:
       check = []
       for row in self.board:
@@ -66,14 +75,14 @@ class tictactoe:
       if self.checkWin(check):
         return True, check[0]
 
-    #checking the main diagonal
+    # checking the main diagonal
     check = []
     for index in self.boardRange:
       check.append(self.board[index][index])
     if self.checkWin(check):
       return True, check[0]
 
-    #checking the reverse diagonal
+    # checking the reverse diagonal
     check = []
     for index in self.boardRange:
       j = len(self.boardRange) - index - 1
