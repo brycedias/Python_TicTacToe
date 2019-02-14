@@ -1,2 +1,33 @@
+from tictactoe import tictactoe
+
 def main():
-  pass
+  game = tictactoe()
+
+  game.printBoard()
+  player = 1
+
+  while not game.gameOver():
+    y = input("What row do you want to play? ")
+    while not checkInt(y):
+      y = input("Please enter a whole number value. ")
+    y = int(y)
+    x = input("What column? ")
+    success = game.turn(x, y, player)
+    if(success):
+      if player == 1:
+        player = 2
+      else:
+        player = 1
+    
+  result = game.gameOver()
+  winner = result[1]
+  print("Player", winner, "has won!")
+
+def checkInt(str):
+  try:
+    int(str)
+    return True
+  except ValueError:
+    return False
+
+main()
