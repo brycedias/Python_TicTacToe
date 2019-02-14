@@ -15,10 +15,7 @@ def main():
     x = input("What column? ")
     success = game.turn(x, y, player)
     if(success):
-      if player == 1:
-        player = 2
-      else:
-        player = 1
+      changePlayer(player)
     
   result = game.gameOver()
   winner = result[1]
@@ -30,5 +27,11 @@ def checkInt(str):
     return True
   except ValueError:
     return False
+
+def changePlayer(player):
+  if player == 1:
+    player = 2
+  else:
+    player = 1
 
 main()

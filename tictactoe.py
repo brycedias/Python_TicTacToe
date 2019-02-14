@@ -44,11 +44,11 @@ class TicTacToe:
     xindex = ord(x) - 97
     if xindex not in self.boardRange:
       print(x, "is not a valid column.")
-      print("Choose a, b, or c.")
+      print("Choose one of the labeled columns. (a, b, c ...)")
       return False
     elif y not in self.boardRange:
       print(y, "is not a valid row.")
-      print("Choose 0, 1, or 2.")
+      print("Choose one of the labeled rows. (1, 2, 3 ...)")
       return False
     elif 1 <= self.board[y][xindex] <= 2:
       print("Player ", self.board[y][xindex], "has already moved there.")
