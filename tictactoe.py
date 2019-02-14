@@ -55,15 +55,16 @@ class tictactoe:
   def gameOver(self):
     #checking the rows
     for row in self.board:
-      if row[0] != row[1]:
-        return False
-      elif row[0] == row[1] == row[2] == 0:
-        return False
-      else:
+      if row.count(row[0]) == len(row) and row[0] != 0:
         return True
 
     #checking the columns
-
+    for col in self.boardRange:
+      check = []
+      for row in self.board:
+        check.append(row[col])
+      if check.count(check[0]) == len(check) and check[0] != 0:
+        return True
 
     #checking the diagonals
 
@@ -77,6 +78,8 @@ game.turn('a', 3, 2)
 game.turn('d', 3, 2)
 game.turn('b', 2, 2)
 game.turn('c', 1, 1)
+game.turn('c', 0, 1)
+game.turn('b', 0, 1)
 if game.gameOver():
   print('you won')
 
