@@ -53,19 +53,56 @@ Summarized:
 
 '''
 
+import numpy as np
+
 class AI: 
 
   numberOfPlays = 0
 
   def __init__(self):
-    
+    corners = [0, 2, 6, 8]
+    edges = [1, 3, 5, 7]
+    center = [4]
 
-  def makeMove(self, board):
-    # Decides what move to take
+  def determineFirstMove(self, flatBoard):
+    # Check if P1 plays corner
+    for num in self.corners:
+      if flatBoard[num] == 1:
+        return self.center[0]
+
+    for num in self.edges:
+      if flatBoard[num] == 1:
+        return self.center[0]
     
+    if flatBoard[center[0]] == 1:
+      return self.corner[0]
+
+  def makeMove(self, flatBoard):
+    # Decides what move to take
+    index = -1
+    if numberOfPlays == 0:
+      index = self.determineFirstMove(flatBoard)
+    
+    return xindex, yindex
+    
+  def flattenBoard(self, board):
+    # Takes the 2d board and returns a 1d board
+    tempBoard = np.array(board)
+    flat = list(tempBoard.flatten())
+    return flat
 
   def analyzeBoard(self, board):
     # Determines where P1 has moved
+
+    if numberOfPlays == 0:
+      determineFirstMove(flatBoard)
+
+    if canWin(board):
+      win()
+    elif canBlock(board):
+      block()
+
+    
     
 
   def canBlock(self, board):
