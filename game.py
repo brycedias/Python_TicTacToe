@@ -15,7 +15,7 @@ def main():
     x = input("What column? ")
     success = game.turn(x, y, player)
     if(success):
-      changePlayer(player)
+      player = changePlayer(player)
     
   result = game.gameOver()
   winner = result[1]
@@ -33,5 +33,6 @@ def changePlayer(player):
     player = 2
   else:
     player = 1
+  return player
 
 main()
