@@ -55,7 +55,7 @@ class tictactoe:
   def gameOver(self):
     #checking the rows
     for row in self.board:
-      if row.count(row[0]) == len(row) and row[0] != 0:
+      if self.checkWin(row):
         return True
 
     #checking the columns
@@ -63,10 +63,29 @@ class tictactoe:
       check = []
       for row in self.board:
         check.append(row[col])
-      if check.count(check[0]) == len(check) and check[0] != 0:
+      if self.checkWin(check):
         return True
 
-    #checking the diagonals
+    #checking the main diagonal
+    check = []
+    for index in self.boardRange:
+      check.append(self.board[index][index])
+    if self.checkWin(check):
+      return True
+
+    #checking the reverse diagonal
+    check = []
+    for index in self.boardRange:
+      j = len(self.boardRange) - index - 1
+      check.append(self.board[index][j])
+    if self.checkWin(check):
+      return True
+    del(check)
+
+  def checkWin(self, check):
+    print(check)
+    if check.count(check[0]) == len(check) and check[0] != 0:
+      return True
 
 game = tictactoe()
 
@@ -80,6 +99,7 @@ game.turn('b', 2, 2)
 game.turn('c', 1, 1)
 game.turn('c', 0, 1)
 game.turn('b', 0, 1)
+game.turn('a', 2, 2)
 if game.gameOver():
   print('you won')
 
