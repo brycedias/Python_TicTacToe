@@ -92,6 +92,7 @@ class AI:
       yindex = index[1]
       
     xindexstr = str(chr(xindex+97))
+    print('Playing at :', xindexstr, yindex)
     return xindexstr, yindex
     
   def flattenBoard(self, board):
@@ -105,13 +106,15 @@ class AI:
     crucialMove = self.canBlockOrWin(board)
     
     if crucialMove[0] == True:
-      count = 0
-      for element in crucialMove[1]:
-        if element == 0:
-          break
-        if count < 2:
-          count += 1
-      return count, crucialMove[2]
+      return crucialMove[1], crucialMove[2]
+    else:
+      rowNumber = 0
+      for row in board:
+        for count, element in enumerate(row):
+          if element == 0:
+            return count, rowNumber
+        rowNumber += 1
+
 
   def canBlockOrWin(self, board):
 
@@ -120,17 +123,69 @@ class AI:
     for row in board:
       # want to check if we can win before we check if we can block
       if self.checkWinPotential(row):
-        return True, row, rowNumber
+        rowIndex = self.getZeroIndex(row)
+        return True, rowIndex, rowNumber
       if self.checkBlockPotential(row):
-        return True, row, rowNumber
+        rowIndex = self.getZeroIndex(row)
+        return True, rowIndex, rowNumber
       rowNumber += 1
-    return False, -1, -1
 
     # check the verticals
-
+    rowNumber = 0
+    for col in range(0,3):
+      check = []
+      for row in board:
+        check.append(row[col])
+      if self.checkWinPotential(check):
+        checkIndex = self.getZeroIndex(check)
+        return True, rowNumber, checkIndex
+      if self.checkBlockPotential(check):
+        checkIndex = self.getZeroIndex(check)
+        return True, rowNumber, checkIndex
+      rowNumber += 1
 
     #check the diagonals
-  
+    # checking the main diagonal
+    rowNumber = -1
+    check = []
+    for index in range(0,3):
+      check.append(board[index][index])
+      rowNumber += 1
+    if self.checkWinPotential(check):
+      checkIndex = self.getZeroIndex(check)
+      return True, checkIndex, rowNumber
+    if self.checkBlockPotential(check):
+      checkIndex = self.getZeroIndex(check)
+      return True, checkIndex, rowNumber
+    # rowNumber += 1
+
+    # checking the reverse diagonal
+    # rowNumber = -1
+    # check = []
+    # for index in range(0,3):
+    #   j = len(range(0,3)) - index - 1
+    #   check.append(board[index][j])
+    #   rowNumber += 1
+    # if self.checkWinPotential(check):
+    #   checkIndex = self.getZeroIndex(check)
+    #   return True, checkIndex, rowNumber
+    # if self.checkBlockPotential(check):
+    #   checkIndex = self.getZeroIndex(check)
+    #   return True, checkIndex, rowNumber
+    # rowNumber += 1
+    del(check)
+
+    return False, -1, -1 # if nothing is found, error
+
+  def getZeroIndex(self, row):
+    count = 0
+    for element in row:
+      if element == 0:
+        break
+      if count < 2:
+        count += 1
+    return count
+
   def playAtIndex(self, row, rowNumber):
     # If P2 can block, it needs to block
     for element in row:

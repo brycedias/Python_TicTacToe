@@ -75,8 +75,11 @@ def playerVsComputer():
       player = changePlayer(player)
     
   result = game.gameOver()
-  winner = result[1]
-  print("Player", winner, "has won!")
+  if result[1] == -1:
+    print("It's a draw!")
+  else:
+    winner = result[1]
+    print("Player", winner, "has won!")
 
 def main():
 

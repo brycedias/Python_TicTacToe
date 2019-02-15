@@ -8,6 +8,8 @@ class TicTacToe:
     # variable to dictate size of board
     self.boardSize = boardSize
     self.boardRange = range(0, self.boardSize)
+    self.totalMoves = 0
+    self.totalPossibleNumOfMoves = boardSize * boardSize
 
     # initializes an empty game board
     # '0' represents an empty space
@@ -59,10 +61,14 @@ class TicTacToe:
       return True
 
   def updateBoard(self, xindex, y, player):
+    self.totalMoves += 1
     self.board[y][xindex] = player
     self.printBoard()
 
   def gameOver(self):
+
+    if self.totalMoves == self.totalPossibleNumOfMoves:
+      return True, -1
     # checking the rows
     for row in self.board:
       if self.checkWin(row):
