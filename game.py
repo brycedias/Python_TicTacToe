@@ -83,7 +83,7 @@ def playerVsComputer():
 
 def main():
 
-  gameMode = input("Enter 1 to play against another player, 2 to play against the computer.")
+  gameMode = input("Enter 1 to play against another player, 2 to play against the computer. ")
 
   while not checkInt(gameMode):
     gameMode = input("Please enter 1 or 2. ")

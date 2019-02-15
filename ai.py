@@ -59,47 +59,38 @@ class AI:
 
   def __init__(self):
     self.numberOfPlays = 0
+
+    # when dealing with the flattened 2d list
     self.corners = [0, 2, 6, 8]
     self.edges = [1, 3, 5, 7]
     self.center = [4]
+    self.rows = [0, 1, 2]
+    self.cols = ['a', 'b', 'c']
 
   def determineFirstMove(self, flatBoard):
     # Check if P1 plays corner
     self.numberOfPlays += 1
-    for num in self.corners:
-      if flatBoard[num] == 1:
-        return 1, 1
 
-    for num in self.edges:
-      if flatBoard[num] == 1:
-        return 1, 1
-    
-    if flatBoard[self.center[0]] == 1:
+    i = flatBoard.index(1)
+    if i in self.corners or i in self.edges:
+      return 1, 1
+    else:
       return 0, 0
 
   def makeMove(self, board):
     # Decides what move to take
     flatBoard = self.flattenBoard(board)
-    # xindex = -1
-    # yindex = -1
     if self.numberOfPlays == 0:
       index = self.determineFirstMove(flatBoard)
-      xindex = index[0]
-      yindex = index[1]
     else:
       index = self.analyzeBoard(board)
-      xindex = index[0]
-      yindex = index[1]
       
-    xindexstr = str(chr(xindex+97))
-    print('Playing at :', xindexstr, yindex)
-    return xindexstr, yindex
+    xindexstr = str(chr(index[0]+97))
+    print('Computer playing at :', xindexstr, index[1])
+    return xindexstr, index[1]
     
   def flattenBoard(self, board):
-    # Takes the 2d board and returns a 1d board
-    tempBoard = np.array(board)
-    flat = list(tempBoard.flatten())
-    return flat
+    return list(np.array(board).flatten())
 
   def analyzeBoard(self, board):
 
@@ -107,41 +98,49 @@ class AI:
     
     if crucialMove[0] == True:
       return crucialMove[1], crucialMove[2]
+    elif crucialMove[3]:
+      # there is a fork
+      # block the fork opportunity
+      keys = list(crucialMove[3].keys())
+      if keys[0] in self.rows:
+        return keys[1], keys[0]
+      else:
+        return keys[0], keys[1]
     else:
       rowNumber = 0
       for row in board:
-        for count, element in enumerate(row):
-          if element == 0:
-            return count, rowNumber
+        if 0 in row:
+          return row.index(0), rowNumber
         rowNumber += 1
 
 
   def canBlockOrWin(self, board):
-
     # check the horizontals
+    potentialForkRows = {}
     rowNumber = 0
     for row in board:
-      # want to check if we can win before we check if we can block
-      if self.checkWinPotential(row):
-        rowIndex = self.getZeroIndex(row)
-        return True, rowIndex, rowNumber
-      if self.checkBlockPotential(row):
-        rowIndex = self.getZeroIndex(row)
-        return True, rowIndex, rowNumber
+      if self.determinePotentialMove(row):
+        return True, self.getZeroIndex(row), rowNumber
+      elif self.determinePotenialForkRow(row):
+        temp = {rowNumber: row}
+        potentialForkRows.update(temp)
+        del(temp)
       rowNumber += 1
 
     # check the verticals
     rowNumber = 0
     for col in range(0,3):
+      colNumber = 0
       check = []
       for row in board:
         check.append(row[col])
-      if self.checkWinPotential(check):
-        checkIndex = self.getZeroIndex(check)
-        return True, rowNumber, checkIndex
-      if self.checkBlockPotential(check):
-        checkIndex = self.getZeroIndex(check)
-        return True, rowNumber, checkIndex
+        colNumber += 1
+      if self.determinePotentialMove(check):
+        return True, rowNumber, self.getZeroIndex(check)
+      elif self.determinePotenialForkRow(check):
+        temp = {str(chr(rowNumber + 97)): check}
+        potentialForkRows.update(temp)
+        del(temp)
       rowNumber += 1
 
     #check the diagonals
@@ -151,13 +150,8 @@ class AI:
     for index in range(0,3):
       check.append(board[index][index])
       rowNumber += 1
-    if self.checkWinPotential(check):
-      checkIndex = self.getZeroIndex(check)
-      return True, checkIndex, rowNumber
-    if self.checkBlockPotential(check):
-      checkIndex = self.getZeroIndex(check)
-      return True, checkIndex, rowNumber
-    # rowNumber += 1
+    if self.determinePotentialMove(check):
+      return True, self.getZeroIndex(check), rowNumber
 
     # checking the reverse diagonal
     # rowNumber = -1
@@ -175,51 +169,32 @@ class AI:
     # rowNumber += 1
     del(check)
 
-    return False, -1, -1 # if nothing is found, error
+    return False, -1, -1, potentialForkRows # if nothing is found, return false
 
   def getZeroIndex(self, row):
-    count = 0
-    for element in row:
-      if element == 0:
-        break
-      if count < 2:
-        count += 1
-    return count
+    try:
+      return row.index(0)
+    except ValueError:
+      return
 
-  def playAtIndex(self, row, rowNumber):
-    # If P2 can block, it needs to block
-    for element in row:
-      if element == 0:
-        return element, rowNumber
-        # xindex, yindex
+  def determinePotentialMove(self, check):
+    # Determines the spot that needs to be blocked or the spot to win
+    zeroCount = check.count(0)
+    oneCount = check.count(1)
+    twoCount = check.count(2)
 
-  def checkBlockPotential(self, check):
-    oneCount = 0
-    zeroCount = 0
-    for element in check:
-      if element == 1:
-        oneCount += 1
-      elif element == 0:
-        zeroCount += 1
-    if oneCount != 2:
+    if (twoCount == 2 or oneCount == 2) and zeroCount == 1:
+      return True
+    else:
       return False
-    elif zeroCount != 1:
-      return False
-    return True
 
-  def checkWinPotential(self, check):
-    twoCount = 0
-    zeroCount = 0
-    for element in check:
-      if element == 2:
-        twoCount += 1
-      elif element == 0:
-        zeroCount += 1
-    if twoCount != 2:
-      return False
-    elif zeroCount != 1:
-      return False
-    return True
+  def determinePotenialForkRow(self, check):
+    zeroCount = check.count(0)
+    oneCount = check.count(1)
+    if oneCount == 1 and zeroCount == 2:
+      return True
+    return False
+
     
     
 
