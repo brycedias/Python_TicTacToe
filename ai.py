@@ -57,33 +57,42 @@ import numpy as np
 
 class AI: 
 
-  numberOfPlays = 0
-
   def __init__(self):
-    corners = [0, 2, 6, 8]
-    edges = [1, 3, 5, 7]
-    center = [4]
+    self.numberOfPlays = 0
+    self.corners = [0, 2, 6, 8]
+    self.edges = [1, 3, 5, 7]
+    self.center = [4]
 
   def determineFirstMove(self, flatBoard):
     # Check if P1 plays corner
+    self.numberOfPlays += 1
     for num in self.corners:
       if flatBoard[num] == 1:
-        return self.center[0]
+        return 1, 1
 
     for num in self.edges:
       if flatBoard[num] == 1:
-        return self.center[0]
+        return 1, 1
     
-    if flatBoard[center[0]] == 1:
-      return self.corner[0]
+    if flatBoard[self.center[0]] == 1:
+      return 0, 0
 
-  def makeMove(self, flatBoard):
+  def makeMove(self, board):
     # Decides what move to take
-    index = -1
-    if numberOfPlays == 0:
+    flatBoard = self.flattenBoard(board)
+    # xindex = -1
+    # yindex = -1
+    if self.numberOfPlays == 0:
       index = self.determineFirstMove(flatBoard)
-    
-    return xindex, yindex
+      xindex = index[0]
+      yindex = index[1]
+    else:
+      index = self.analyzeBoard(board)
+      xindex = index[0]
+      yindex = index[1]
+      
+    xindexstr = str(chr(xindex+97))
+    return xindexstr, yindex
     
   def flattenBoard(self, board):
     # Takes the 2d board and returns a 1d board
@@ -92,25 +101,71 @@ class AI:
     return flat
 
   def analyzeBoard(self, board):
-    # Determines where P1 has moved
 
-    if numberOfPlays == 0:
-      determineFirstMove(flatBoard)
-
-    if canWin(board):
-      win()
-    elif canBlock(board):
-      block()
-
+    crucialMove = self.canBlockOrWin(board)
     
-    
+    if crucialMove[0] == True:
+      count = 0
+      for element in crucialMove[1]:
+        if element == 0:
+          break
+        if count < 2:
+          count += 1
+      return count, crucialMove[2]
 
-  def canBlock(self, board):
-    # If P2 can block, but not win, it needs to block
-    
+  def canBlockOrWin(self, board):
 
-  def canWin(self, board):
-    # If P2 can win, it needs to win
+    # check the horizontals
+    rowNumber = 0
+    for row in board:
+      # want to check if we can win before we check if we can block
+      if self.checkWinPotential(row):
+        return True, row, rowNumber
+      if self.checkBlockPotential(row):
+        return True, row, rowNumber
+      rowNumber += 1
+    return False, -1, -1
+
+    # check the verticals
+
+
+    #check the diagonals
+  
+  def playAtIndex(self, row, rowNumber):
+    # If P2 can block, it needs to block
+    for element in row:
+      if element == 0:
+        return element, rowNumber
+        # xindex, yindex
+
+  def checkBlockPotential(self, check):
+    oneCount = 0
+    zeroCount = 0
+    for element in check:
+      if element == 1:
+        oneCount += 1
+      elif element == 0:
+        zeroCount += 1
+    if oneCount != 2:
+      return False
+    elif zeroCount != 1:
+      return False
+    return True
+
+  def checkWinPotential(self, check):
+    twoCount = 0
+    zeroCount = 0
+    for element in check:
+      if element == 2:
+        twoCount += 1
+      elif element == 0:
+        zeroCount += 1
+    if twoCount != 2:
+      return False
+    elif zeroCount != 1:
+      return False
+    return True
+    
     
 
   

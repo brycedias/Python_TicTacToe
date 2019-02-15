@@ -4,11 +4,11 @@
 
 class TicTacToe:
 
-  # variable to dictate size of board
-  boardSize = 3
-  boardRange = range(0, boardSize)
+  def __init__(self, boardSize):
+    # variable to dictate size of board
+    self.boardSize = boardSize
+    self.boardRange = range(0, self.boardSize)
 
-  def __init__(self):
     # initializes an empty game board
     # '0' represents an empty space
     # dynamically initializes square board of size boardSize

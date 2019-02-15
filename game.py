@@ -1,8 +1,35 @@
 from tictactoe import TicTacToe
 from ai import AI
 
+def checkInt(str):
+  try:
+    int(str)
+    return True
+  except ValueError:
+    return False
+
+def changePlayer(player):
+  if player == 1:
+    player = 2
+  else:
+    player = 1
+  return player
+
 def playerVsPlayer():
-  game = TicTacToe()
+  size = input("What size board do you want? Enter a whole number between 3 and 7")
+
+  while not checkInt(size):
+    size = input("Please enter a whole number between 3 and 7. ")
+
+  size = int(size)
+
+  while (size < 3 or size > 7):
+    size = input("Please enter a whole number between 3 and 7. ")
+    while not checkInt(size):
+      size = input("Please enter a whole number between 3 and 7. ")
+    size = int(size)
+
+  game = TicTacToe(size)
 
   game.printBoard()
   player = 1
@@ -22,22 +49,8 @@ def playerVsPlayer():
   winner = result[1]
   print("Player", winner, "has won!")
 
-def checkInt(str):
-  try:
-    int(str)
-    return True
-  except ValueError:
-    return False
-
-def changePlayer(player):
-  if player == 1:
-    player = 2
-  else:
-    player = 1
-  return player
-
 def playerVsComputer():
-  game = TicTacToe()
+  game = TicTacToe(3)
 
   charles = AI()
 
@@ -57,7 +70,7 @@ def playerVsComputer():
         player = changePlayer(player)
     
     if player == 2:
-      aiMove = charles.makeMove()
+      aiMove = charles.makeMove(game.board)
       game.turn(aiMove[0], aiMove[1], player)
       player = changePlayer(player)
     
@@ -74,7 +87,7 @@ def main():
 
   gameMode = int(gameMode)
 
-  while (gameMode != 1 or gameMode != 2):
+  while (gameMode != 1 and gameMode != 2):
     gameMode = input("Please enter 1 or 2. ")
     while not checkInt(gameMode):
       gameMode = input("Please enter 1 or 2. ")
@@ -84,6 +97,5 @@ def main():
     playerVsPlayer()
   else:
     playerVsComputer()
-
 
 main()
