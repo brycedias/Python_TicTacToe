@@ -34,7 +34,7 @@ def playerVsPlayer():
   game.printBoard()
   player = 1
 
-  while not game.gameOver():
+  while not game.gameOver() and game.totalMoves < game.totalPossibleNumOfMoves:
     print('Player ' + str(player) + '\'s turn!')
     y = input("What row do you want to play? ")
     while not checkInt(y):
@@ -57,7 +57,7 @@ def playerVsComputer():
   game.printBoard()
   player = 1
 
-  while not game.gameOver():
+  while not game.gameOver() and game.totalMoves < game.totalPossibleNumOfMoves:
     if player == 1:
       print('Player ' + str(player) + '\'s turn!')
       y = input("What row do you want to play? ")

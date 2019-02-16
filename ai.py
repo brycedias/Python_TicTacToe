@@ -9,27 +9,9 @@
 There are only 3 possible first moves: corner, edge, center.
 Player 1 can win or force a draw from any starting position.
 
-For the first iteration, I am going to assume computer is P2
+For the first version of this program, I am going to assume computer is P2
 X = P1, O = P2
 
-  If X plays corner opening move, O should take center, 
-    and then an edge, forcing X to block in the next move. 
-    This will stop any forks from happening. 
-    When both X and O are perfect players and X chooses to start 
-    by marking a corner, O takes the center, 
-    and X takes the corner opposite the original. 
-    In that case, O is free to choose any edge as its second move. 
-    However, if X is not a perfect player and has played a corner and 
-    then an edge, O should not play the opposite edge as its second move, 
-    because then X is not forced to block in the next move and can fork.
-  If X plays edge opening move, O should take center or one of the corners 
-    adjacent to X, and then follow the above list of priorities, 
-    mainly paying attention to block forks.
-  If X plays center opening move, O should take corner, 
-    and then follow the above list of priorities, 
-    mainly paying attention to block forks.
-
-Summarized:
   If P1 plays corner, then P2 should take center.
     after P1 plays again, P2 should take an edge.
     UNLESS P1 makes an oopsie and plays an edge or a different corner
@@ -54,6 +36,7 @@ Summarized:
 '''
 
 import numpy as np
+import random as rand
 
 class AI: 
 
@@ -95,18 +78,20 @@ class AI:
   def analyzeBoard(self, board):
 
     crucialMove = self.canBlockOrWin(board)
-    
+
     if crucialMove[0] == True:
       return crucialMove[1], crucialMove[2]
-    elif crucialMove[3]:
+    elif crucialMove[3] and len(crucialMove) == 2:
       # there is a fork
-      # block the fork opportunity
+      # try to block the fork opportunity - sometimes there are two forks
+      #   in the case of two forks, block one and accept fate
       keys = list(crucialMove[3].keys())
       if keys[0] in self.rows:
         return keys[1], keys[0]
       else:
         return keys[0], keys[1]
     else:
+      # fail-safe in the chance that there isn't a block, win, or a fork
       rowNumber = 0
       for row in board:
         if 0 in row:
@@ -143,30 +128,24 @@ class AI:
         del(temp)
       rowNumber += 1
 
-    #check the diagonals
+    del(rowNumber)
+
+    # check the diagonals
     # checking the main diagonal
-    rowNumber = -1
     check = []
     for index in range(0,3):
       check.append(board[index][index])
-      rowNumber += 1
-    if self.determinePotentialMove(check):
-      return True, self.getZeroIndex(check), rowNumber
+      if self.determinePotentialMove(check):
+        return True, self.getZeroIndex(check), self.getZeroIndex(check)
 
     # checking the reverse diagonal
-    # rowNumber = -1
-    # check = []
-    # for index in range(0,3):
-    #   j = len(range(0,3)) - index - 1
-    #   check.append(board[index][j])
-    #   rowNumber += 1
-    # if self.checkWinPotential(check):
-    #   checkIndex = self.getZeroIndex(check)
-    #   return True, checkIndex, rowNumber
-    # if self.checkBlockPotential(check):
-    #   checkIndex = self.getZeroIndex(check)
-    #   return True, checkIndex, rowNumber
-    # rowNumber += 1
+    check = []
+    for index in range(0,3):
+      j = len(range(0,3)) - index - 1
+      check.append(board[j][index])
+      if self.determinePotentialMove(check):
+        print('line 165', check)
+        return True, self.getZeroIndex(check), 2 - self.getZeroIndex(check)
     del(check)
 
     return False, -1, -1, potentialForkRows # if nothing is found, return false

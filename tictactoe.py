@@ -9,7 +9,7 @@ class TicTacToe:
     self.boardSize = boardSize
     self.boardRange = range(0, self.boardSize)
     self.totalMoves = 0
-    self.totalPossibleNumOfMoves = boardSize * boardSize
+    self.totalPossibleNumOfMoves = boardSize * boardSize - 1
 
     # initializes an empty game board
     # '0' represents an empty space
